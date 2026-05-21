@@ -9,6 +9,20 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 
+interface PetDisplay {
+  name: string;
+  type: string;
+  rating: number;
+  img: string;
+}
+
+interface UserPet {
+  name?: string;
+  type?: string;
+  rating?: number;
+  image?: string;
+}
+
 const UserProfile = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState('Profile');
@@ -92,12 +106,19 @@ const UserProfile = () => {
   const cover = user.coverImage || 'https://images.unsplash.com/photo-1581579186913-45ac3e6efe93?q=80&w=1200&h=400&fit=crop';
   const avatar = user.avatar || 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=200&h=200&fit=crop';
 
-  const pets = user.pets && Array.isArray(user.pets) ? user.pets.map((pet: any) => ({
-    name: pet.name,
-    type: pet.type || 'Pet',
-    rating: pet.rating || 5.0,
-    img: pet.image || 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=200&h=250&fit=crop'
-  })) : [];
+  const pets: PetDisplay[] =
+    user.pets && Array.isArray(user.pets)
+      ? user.pets.map(
+          (pet: UserPet): PetDisplay => ({
+            name: pet.name || 'Pet',
+            type: pet.type || 'Pet',
+            rating: pet.rating || 5.0,
+            img:
+              pet.image ||
+              'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=200&h=250&fit=crop',
+          })
+        )
+      : [];
 
   const homeFeatures = [];
   if (user.homeFeatures?.nonSmoking) homeFeatures.push("Non smoking, secure family home");
@@ -237,7 +258,7 @@ const UserProfile = () => {
                   {pets.length === 0 ? (
                     <p className="col-span-3 text-xs text-[#8C8273] italic text-center py-4 bg-[#FDFBF7] rounded-xl border border-[#F3EDE2]">No pets listed yet.</p>
                   ) : (
-                    pets.map((pet, i) => (
+                    pets.map((pet: PetDisplay, i: number) => (
                       <div key={i} className="group">
                         <div className="h-48 rounded-[1.5rem] overflow-hidden mb-4 shadow-md relative">
                           <img src={pet.img} alt={pet.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />

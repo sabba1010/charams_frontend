@@ -24,6 +24,7 @@ interface JobData {
   status: string;
   petImages: string[];
   owner: {
+    _id?: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -234,7 +235,7 @@ const JobDetails = () => {
 
             {/* Job Poster Card */}
             <PosterCard
-              id={job.owner._id}
+              id={job.owner._id || ''}
               name={`${job.owner.firstName} ${job.owner.lastName}`}
               email={job.owner.email}
               avatar={job.owner.avatar || "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?q=80&w=200&h=200&fit=crop"}
