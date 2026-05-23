@@ -11,6 +11,16 @@ import { motion } from 'framer-motion';
 import safetyBannerImg from '../assets/Gemini_Generated_Image_ulc5i9ulc5i9ulc5.png';
 import PosterCard from '../components/jobs/PosterCard';
 import { useAuth } from '../hooks/useAuth';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+const customMarkerIcon = new L.DivIcon({
+  className: 'custom-div-icon-black',
+  html: `<div style="background-color:#c28876;width:24px;height:24px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+});
 
 interface JobData {
   _id: string;
@@ -42,9 +52,27 @@ const JobDetails = () => {
   const [applying, setApplying] = useState(false);
   const [hasApplied, setHasApplied] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [mapCoords, setMapCoords] = useState<{lat: number, lng: number} | null>(null);
   const { isLoggedIn } = useAuth();
 
   const apiUrl = import.meta.env.VITE_API_URL || 'https://clietn16-backend.vercel.app/api';
+
+  useEffect(() => {
+    if (job?.location) {
+      const fetchCoords = async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(job.location)}`);
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setMapCoords({ lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) });
+          }
+        } catch (err) {
+          console.error('Error fetching coords:', err);
+        }
+      };
+      fetchCoords();
+    }
+  }, [job?.location]);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -319,6 +347,27 @@ const JobDetails = () => {
                 ))}
               </div>
             </div>
+
+            {/* Map Section */}
+            {mapCoords && (
+              <div className="bg-white rounded-[2rem] p-10 shadow-sm border border-slate-100">
+                <h2 className="text-2xl font-bold text-[#1a2e35] font-serif mb-6 flex items-center gap-2">
+                  <MapPin className="text-[#c28876]" size={24} />
+                  Location Map
+                </h2>
+                <div className="h-64 md:h-80 w-full rounded-2xl overflow-hidden border border-slate-200 z-0 relative">
+                  <MapContainer
+                    center={[mapCoords.lat, mapCoords.lng]}
+                    zoom={14}
+                    style={{ height: '100%', width: '100%', zIndex: 1 }}
+                    scrollWheelZoom={false}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker position={[mapCoords.lat, mapCoords.lng]} icon={customMarkerIcon} />
+                  </MapContainer>
+                </div>
+              </div>
+            )}
 
           </div>
 
