@@ -163,12 +163,14 @@ const Hero = () => {
                 className="w-full bg-transparent border-none outline-none text-slate-700 text-sm font-medium appearance-none cursor-pointer pr-8 focus:ring-0 focus:outline-none"
               >
                 <option value="">All Categories</option>
-                <option value="house-sitting">House Sitting</option>
+                <option value="pet-sitting">Pet Sitting</option>
                 <option value="dog-walking">Dog Walking</option>
-                <option value="boarding">Dog Boarding</option>
-                <option value="day-care">Doggy Day Care</option>
+                <option value="pet-boarding">Pet Boarding</option>
+                <option value="pet-day-care">Pet Day Care</option>
+                <option value="holiday-home-sitting">Holiday Home Sitting</option>
+                <option value="security-checks">Security Checks</option>
+                <option value="drop-in-visits">Drop-In Visits</option>
                 <option value="pet-taxi">Pet Taxi</option>
-                <option value="plant-care">Plant Care</option>
               </select>
               <ChevronDown className="w-4 h-4 text-slate-400 absolute right-6 pointer-events-none" />
             </div>

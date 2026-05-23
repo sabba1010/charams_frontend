@@ -48,11 +48,14 @@ const userMarkerIcon = new L.DivIcon({
 });
 
 const CATEGORIES = [
-  'Boarding',
+  'Pet Sitting',
   'Dog Walking',
-  'Doggy Day Care',
+  'Pet Boarding',
+  'Pet Day Care',
+  'Holiday Home Sitting',
+  'Security Checks',
   'Drop-In Visits',
-  'House Sitting',
+  'Pet Taxi'
 ];
 
 const FullListbanner = () => {
@@ -259,7 +262,7 @@ const FullListbanner = () => {
       </div>
 
       {/* ── Top-left button ────────────────────────────────────────────── */}
-      <div className="absolute top-10 left-6 z-[1000]">
+      <div className="absolute top-10 left-6 z-40">
         <button className="bg-white px-4 py-2 rounded-[20px] shadow-md text-sm font-medium flex items-center gap-2 hover:bg-gray-50 transition-colors border border-gray-200">
           <span>Show next 4 listings</span>
           <span className="text-base">→</span>
@@ -267,7 +270,7 @@ const FullListbanner = () => {
       </div>
 
       {/* ── Custom zoom controls ───────────────────────────────────────── */}
-      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-[1000] flex flex-col">
+      <div className="absolute left-6 top-1/2 -translate-y-1/2 z-40 flex flex-col">
         <button
           onClick={() => map?.zoomIn()}
           className="bg-white w-8 h-8 flex items-center justify-center rounded-t-md border border-gray-300 shadow-sm font-bold text-gray-600 hover:bg-gray-50 text-lg leading-none transition-colors"
@@ -283,7 +286,7 @@ const FullListbanner = () => {
       </div>
 
       {/* ── Search bar overlay ─────────────────────────────────────────── */}
-      <div className="absolute bottom-10 left-0 right-0 z-[1000] px-6">
+      <div className="absolute bottom-10 left-0 right-0 z-40 px-6">
         <div className="max-w-5xl mx-auto bg-white rounded-full shadow-2xl border border-gray-100 flex items-center overflow-visible">
 
           <div className="flex-1 flex flex-col relative px-5 border-r border-gray-200 min-w-0" ref={keywordRef}>
@@ -299,7 +302,7 @@ const FullListbanner = () => {
               className="w-full py-4 outline-none text-gray-700 placeholder:text-gray-400 text-sm bg-transparent"
             />
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[2000] py-1 max-h-60 overflow-y-auto">
+              <div className="absolute bottom-full mb-2 left-0 right-0 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 py-1 max-h-60 overflow-y-auto">
                 {suggestions.map((sug, idx) => (
                   <button
                     key={idx}
@@ -346,7 +349,7 @@ const FullListbanner = () => {
 
             {/* Dropdown panel */}
             {catOpen && (
-              <div className="absolute bottom-full mb-2 left-0 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-[2000]">
+              <div className="absolute bottom-full mb-2 left-0 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50">
                 {/* Search input */}
                 <div className="p-2 border-b border-gray-100">
                   <input

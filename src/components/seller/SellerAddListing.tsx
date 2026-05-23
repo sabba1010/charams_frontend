@@ -394,7 +394,7 @@ const SellerAddListing: React.FC = () => {
     { service: "Basic Care", price: "$20.00", desc: "Standard dog walking or drop-in visit" },
     { service: "Premium Boarding", price: "$50.00", desc: "Full boarding with overnight stay and play" }
   ]);
-  const [newServiceName, setNewServiceName] = useState('');
+  const [newServiceName, setNewServiceName] = useState('Pet Sitting');
   const [newServicePrice, setNewServicePrice] = useState('');
   const [newServiceDesc, setNewServiceDesc] = useState('');
 
@@ -607,11 +607,14 @@ const SellerAddListing: React.FC = () => {
                 className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-[13px] text-slate-600 outline-none"
               >
                 <option value="">Choose Service Category</option>
-                <option value="boarding">Boarding</option>
+                <option value="pet-sitting">Pet Sitting</option>
                 <option value="dog-walking">Dog Walking</option>
-                <option value="doggy-day-care">Doggy Day Care</option>
+                <option value="pet-boarding">Pet Boarding</option>
+                <option value="pet-day-care">Pet Day Care</option>
+                <option value="holiday-home-sitting">Holiday Home Sitting</option>
+                <option value="security-checks">Security Checks</option>
                 <option value="drop-in-visits">Drop-In Visits</option>
-                <option value="house-sitting">House Sitting</option>
+                <option value="pet-taxi">Pet Taxi</option>
               </select>
               <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
             </div>
@@ -979,13 +982,24 @@ const SellerAddListing: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-500">Service Name</label>
-                <input
-                  type="text"
+                <select
                   value={newServiceName}
                   onChange={(e) => setNewServiceName(e.target.value)}
-                  placeholder="e.g. Overnight Boarding"
                   className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-[12px] text-slate-600 focus:outline-none focus:border-slate-400 transition-all shadow-sm"
-                />
+                >
+                  {[
+                    'Pet Sitting',
+                    'Dog Walking',
+                    'Pet Boarding',
+                    'Pet Day Care',
+                    'Holiday Home Sitting',
+                    'Security Checks',
+                    'Drop-In Visits',
+                    'Pet Taxi'
+                  ].map(s => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-1.5">
                 <label className="text-[11px] font-bold text-slate-500">Price Rate</label>

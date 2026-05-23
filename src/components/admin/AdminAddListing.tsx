@@ -362,11 +362,14 @@ const AdminAddListing: React.FC = () => {
                 className="w-full appearance-none bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-[13px] text-slate-600 outline-none"
               >
                 <option value="">Choose Service Category</option>
-                <option value="boarding">Boarding</option>
+                <option value="pet-sitting">Pet Sitting</option>
                 <option value="dog-walking">Dog Walking</option>
-                <option value="doggy-day-care">Doggy Day Care</option>
+                <option value="pet-boarding">Pet Boarding</option>
+                <option value="pet-day-care">Pet Day Care</option>
+                <option value="holiday-home-sitting">Holiday Home Sitting</option>
+                <option value="security-checks">Security Checks</option>
                 <option value="drop-in-visits">Drop-In Visits</option>
-                <option value="house-sitting">House Sitting</option>
+                <option value="pet-taxi">Pet Taxi</option>
               </select>
               <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400" />
             </div>

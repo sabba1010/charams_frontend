@@ -263,6 +263,7 @@ const AdminJobsSection = () => {
     startDate: '',
     endDate: '',
     petType: 'Dog',
+    serviceType: 'Pet Sitting',
     budget: ''
   });
 
@@ -342,7 +343,7 @@ const AdminJobsSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.title || !form.description || !form.location || !form.startDate || !form.endDate || !form.budget) return;
+    if (!form.title || !form.description || !form.location || !form.startDate || !form.endDate || !form.budget || !form.serviceType) return;
     setSubmitting(true);
 
     try {
@@ -367,7 +368,7 @@ const AdminJobsSection = () => {
       const data = await res.json();
       if (data.success) {
         setJobs(prev => [data.data, ...prev]);
-        setForm({ title: '', description: '', location: '', startDate: '', endDate: '', petType: 'Dog', budget: '' });
+        setForm({ title: '', description: '', location: '', startDate: '', endDate: '', petType: 'Dog', serviceType: 'Pet Sitting', budget: '' });
         setImageFiles([]);
         setImagePreviews([]);
         setSuccess(true);
@@ -560,6 +561,7 @@ const AdminJobsSection = () => {
                       <span className="flex items-center gap-1.5"><MapPin size={13} /> {job.location}</span>
                       <span className="flex items-center gap-1.5"><Calendar size={13} /> {job.startDate} → {job.endDate}</span>
                       <span className="flex items-center gap-1.5">🐾 {job.petType}</span>
+                      <span className="flex items-center gap-1.5">💼 {(job as any).serviceType}</span>
                       {job.budget && <span>💰 {job.budget}</span>}
                     </div>
                   </div>
@@ -682,6 +684,27 @@ const AdminJobsSection = () => {
                 >
                   {['Dog', 'Cat', 'Bird', 'Fish', 'Rabbit', 'Other'].map(p => (
                     <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[11px] font-bold text-slate-500 uppercase">Service Required *</label>
+                <select
+                  value={form.serviceType}
+                  onChange={e => setForm(f => ({ ...f, serviceType: e.target.value }))}
+                  className="w-full border border-slate-200 rounded-xl px-4 py-3 text-[13px] text-slate-700 focus:outline-none focus:border-[#1a2e35] transition-all bg-white"
+                >
+                  {[
+                    'Pet Sitting',
+                    'Dog Walking',
+                    'Pet Boarding',
+                    'Pet Day Care',
+                    'Holiday Home Sitting',
+                    'Security Checks',
+                    'Drop-In Visits',
+                    'Pet Taxi'
+                  ].map(s => (
+                    <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
               </div>

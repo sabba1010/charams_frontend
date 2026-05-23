@@ -34,7 +34,7 @@ const SellerProfileSettings = () => {
     { id: 2, name: 'Dog Walking', price: '150', unit: 'hr' },
   ]);
 
-  const [newService, setNewService] = useState({ name: '', price: '', unit: 'day' });
+  const [newService, setNewService] = useState({ name: 'Pet Sitting', price: '', unit: 'day' });
 
   // 3. Availability matrix state
   const [availability, setAvailability] = useState({
@@ -207,13 +207,24 @@ const SellerProfileSettings = () => {
           <div className="bg-[#fcfbf9] border border-[#f3eee5] rounded-xl p-4 space-y-3">
             <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Add New Service</h4>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <input 
-                type="text" 
-                placeholder="e.g. House Sitting"
+              <select 
                 value={newService.name}
                 onChange={(e) => setNewService(prev => ({ ...prev, name: e.target.value }))}
                 className="bg-white border border-slate-200 rounded-lg p-2.5 text-xs outline-none"
-              />
+              >
+                {[
+                  'Pet Sitting',
+                  'Dog Walking',
+                  'Pet Boarding',
+                  'Pet Day Care',
+                  'Holiday Home Sitting',
+                  'Security Checks',
+                  'Drop-In Visits',
+                  'Pet Taxi'
+                ].map(s => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
               <div className="flex gap-2">
                 <input 
                   type="number" 
