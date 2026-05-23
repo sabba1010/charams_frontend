@@ -23,8 +23,21 @@ interface Job {
   };
 }
 
+const CATEGORIES = [
+  'All Categories',
+  'Pet Sitting',
+  'Dog Walking',
+  'Pet Boarding',
+  'Pet Day Care',
+  'Holiday Home Sitting',
+  'Security Checks',
+  'Drop-In Visits',
+  'Pet Taxi'
+];
+
 const JobsOffered = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('All Categories');
   const { isLoggedIn } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
@@ -48,10 +61,16 @@ const JobsOffered = () => {
     fetchJobs();
   }, []);
 
-  const filteredJobs = jobs.filter(job =>
-    job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    job.location.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = job.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          job.location.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Fallback to petType if serviceType is missing (for older entries)
+    const jobCategory = job.serviceType || job.petType;
+    const matchesCategory = categoryFilter === 'All Categories' || jobCategory === categoryFilter;
+    
+    return matchesSearch && matchesCategory;
+  });
 
   const getDaysAgo = (dateStr: string) => {
     const diff = new Date().getTime() - new Date(dateStr).getTime();
@@ -88,6 +107,18 @@ const JobsOffered = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+          <div className="w-full md:w-64">
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="w-full px-4 py-4 bg-slate-50 border-none rounded-xl outline-none focus:ring-2 focus:ring-[#1a282b]/10 transition-all text-slate-700 appearance-none cursor-pointer"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundPosition: `right 1rem center`, backgroundRepeat: `no-repeat`, backgroundSize: `1.5em 1.5em` }}
+            >
+              {CATEGORIES.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+            </select>
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
             <button className="flex items-center justify-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all shadow-lg active:scale-95 flex-1 md:flex-none">
