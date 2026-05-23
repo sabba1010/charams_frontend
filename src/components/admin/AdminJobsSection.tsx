@@ -1,7 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PlusCircle, MapPin, Calendar, Users, Loader2, Briefcase, Check, X, Clock, Image as ImageIcon, XCircle, MessageSquare, Star, CreditCard, Banknote, ShieldCheck, Trash2, AlertTriangle } from 'lucide-react';
+import { PlusCircle, MapPin, Calendar, Users, Loader2, Briefcase, Check, X, Clock, Image as ImageIcon, XCircle, MessageSquare, Star, CreditCard, Banknote, ShieldCheck, Trash2, AlertTriangle, LocateFixed } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import ChatBox from '../chat/ChatBox';
+import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+const blackMarkerIcon = new L.DivIcon({
+  className: 'custom-div-icon-black',
+  html: `<div style="background-color:#111c1e;width:24px;height:24px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>`,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+});
+
+const MapRecenter = ({ lat, lng }: { lat: number; lng: number }) => {
+  const map = useMap();
+  React.useEffect(() => {
+    map.setView([lat, lng], map.getZoom());
+  }, [lat, lng, map]);
+  return null;
+};
+
+const MapEventsHandler = ({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) => {
+  useMapEvents({
+    click(e) {
+      onMapClick(e.latlng.lat, e.latlng.lng);
+    },
+  });
+  return null;
+};
 
 interface Job {
   _id: string;
@@ -254,6 +281,40 @@ const AdminJobsSection = () => {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Map state
+  const [mapLat, setMapLat] = useState(40.7128);
+  const [mapLng, setMapLng] = useState(-74.0060);
+  const [isLocating, setIsLocating] = useState(false);
+
+  const handleLocateMe = () => {
+    if (navigator.geolocation) {
+      setIsLocating(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setMapLat(lat);
+          setMapLng(lng);
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+            const data = await res.json();
+            if (data && data.display_name) {
+              setForm(f => ({ ...f, location: data.display_name }));
+            }
+          } catch (err) {
+            console.error("Reverse geocoding error:", err);
+          } finally {
+            setIsLocating(false);
+          }
+        },
+        (error) => {
+          console.error("Error obtaining location", error);
+          setIsLocating(false);
+        }
+      );
+    }
+  };
 
   // Form state
   const [form, setForm] = useState({
@@ -664,8 +725,69 @@ const AdminJobsSection = () => {
                   className="w-full border border-slate-200 rounded-xl px-4 py-3 text-[13px] text-slate-700 focus:outline-none focus:border-[#1a2e35] transition-all resize-none"
                 />
               </div>
-              <div className="space-y-1.5">
+              <div className="space-y-1.5 md:col-span-2">
                 <label className="text-[11px] font-bold text-slate-500 uppercase">Location *</label>
+                <div className="h-48 rounded-xl overflow-hidden border border-slate-200 mb-2 relative group">
+                  <MapContainer
+                    center={[mapLat, mapLng]}
+                    zoom={13}
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                    <Marker
+                      position={[mapLat, mapLng]}
+                      icon={blackMarkerIcon}
+                      draggable={true}
+                      eventHandlers={{
+                        dragend: async (e: any) => {
+                          const marker = e.target;
+                          if (marker != null) {
+                            const position = marker.getLatLng();
+                            setMapLat(position.lat);
+                            setMapLng(position.lng);
+                            try {
+                              const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${position.lat}&lon=${position.lng}`);
+                              const data = await res.json();
+                              if (data && data.display_name) {
+                                setForm(f => ({ ...f, location: data.display_name }));
+                              }
+                            } catch (err) {
+                              console.error("Reverse geocoding error:", err);
+                            }
+                          }
+                        }
+                      }}
+                    />
+                    <MapRecenter lat={mapLat} lng={mapLng} />
+                    <MapEventsHandler
+                      onMapClick={async (lat, lng) => {
+                        setMapLat(lat);
+                        setMapLng(lng);
+                        try {
+                          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                          const data = await res.json();
+                          if (data && data.display_name) {
+                            setForm(f => ({ ...f, location: data.display_name }));
+                          }
+                        } catch (err) {
+                          console.error("Reverse geocoding error:", err);
+                        }
+                      }}
+                    />
+                  </MapContainer>
+                  <div className="absolute top-2 right-2 z-[1000] bg-[#111c1e] text-white px-3 py-1 rounded text-[10px] font-bold shadow pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity">
+                    🖱️ Click or Drag Marker to Select Location
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLocateMe}
+                    disabled={isLocating}
+                    className="absolute bottom-4 right-4 z-[1000] bg-white border border-slate-200 text-[#1a2e35] p-2.5 rounded-full shadow-lg hover:bg-slate-50 transition-all flex items-center justify-center disabled:opacity-50"
+                    title="Use My Location"
+                  >
+                    {isLocating ? <Loader2 size={18} className="animate-spin text-[#c28876]" /> : <LocateFixed size={18} />}
+                  </button>
+                </div>
                 <input
                   type="text"
                   value={form.location}

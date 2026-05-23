@@ -5,7 +5,7 @@ import {
   DollarSign, CheckCircle2, ChevronLeft,
   Dog, Info, Home, Bed, Bath, Wifi,
   Cigarette, Star, User, ChevronRight, ShieldCheck,
-  Loader2
+  Loader2, Briefcase
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import safetyBannerImg from '../assets/Gemini_Generated_Image_ulc5i9ulc5i9ulc5.png';
@@ -20,6 +20,7 @@ interface JobData {
   startDate: string;
   endDate: string;
   petType: string;
+  serviceType?: string;
   budget: string;
   status: string;
   petImages: string[];
@@ -298,6 +299,7 @@ const JobDetails = () => {
               <h2 className="text-2xl font-bold text-[#1a2e35] font-serif mb-8">Details</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
                 {[
+                  { label: "Service", value: job.serviceType || 'Not specified', icon: <Briefcase size={18} /> },
                   { label: "Pet Type", value: job.petType, icon: <Dog size={18} /> },
                   { label: "Start Date", value: job.startDate, icon: <Calendar size={18} /> },
                   { label: "Location", value: job.location, icon: <MapPin size={18} /> },

@@ -130,7 +130,7 @@ const JobsOffered = () => {
                     {/* Job Category Tag */}
                     <div className="flex items-center justify-between mb-6">
                       <span className="px-4 py-1.5 bg-[#c28876]/10 text-[#c28876] text-[10px] font-bold uppercase tracking-wider rounded-full">
-                        {job.petType || 'Pet Sitting'}
+                        {job.serviceType || job.petType || 'Pet Sitting'}
                       </span>
                       <span className="text-slate-400 text-[10px] font-medium uppercase tracking-widest">
                         Posted {getDaysAgo(job.createdAt)}
