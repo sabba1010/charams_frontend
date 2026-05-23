@@ -169,13 +169,34 @@ const FullListbanner = () => {
 
   const suggestions = getSuggestions();
 
-  // Sync state if URL changes externally
+  // Sync state if URL changes externally and update map if location is provided
   useEffect(() => {
     const params = new URLSearchParams(location.search);
+    const locParam = params.get('location') || '';
     setKeyword(params.get('keyword') || '');
-    setLocInput(params.get('location') || '');
+    setLocInput(locParam);
     setSelectedCat(params.get('category') || 'All Categories');
-  }, [location.search]);
+
+    if (locParam && locParam.trim() !== '') {
+      const fetchCoords = async () => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locParam)}`);
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            setMapCenter([lat, lon]);
+            if (map) {
+              map.flyTo([lat, lon], 12, { duration: 1.5 });
+            }
+          }
+        } catch (err) {
+          console.error('Error fetching search location coordinates:', err);
+        }
+      };
+      fetchCoords();
+    }
+  }, [location.search, map]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
